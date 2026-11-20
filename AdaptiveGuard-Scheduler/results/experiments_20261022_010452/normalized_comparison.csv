@@ -1,0 +1,8 @@
+Approach,Safety Score (↑),Utility Score (↑),Efficiency Score (↑),Overhead Score (↑)
+EDF,0.2378,0.7466,0.9838,0.7811
+EDF-VD,0.6638,0.0,0.7785,0.8046
+Classical Reactive MC,0.6638,0.0,0.7785,0.8046
+EDF-VD + Degraded LO Service,0.6638,0.277,0.8966,0.7828
+Flexible MC,0.2378,0.7466,0.9838,0.7809
+Proactive Risk / Mode Change,0.5668,0.3865,0.9872,0.257
+AdaptiveGuard,0.5483,0.522,0.9909,0.2767

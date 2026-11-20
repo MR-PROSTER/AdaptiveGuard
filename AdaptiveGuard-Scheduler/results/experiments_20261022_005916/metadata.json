@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-10-22T01:02:31.453337",
+  "config": {
+    "task_counts": [
+      10
+    ],
+    "target_utilizations": [
+      0.6,
+      0.8,
+      1.0
+    ],
+    "hi_ratios": [
+      0.4
+    ],
+    "duration": 2000.0,
+    "warmup_time": 200.0,
+    "c_hi_factor": 2.5,
+    "num_tasksets": 10,
+    "seed_base": 42,
+    "scenario": "BOTH_OVERRUN",
+    "enable_overhead": true,
+    "output_base_dir": "results"
+  },
+  "total_tasksets": 30,
+  "total_simulations": 210,
+  "integrity_checks_passed": true,
+  "integrity_issues_count": 0,
+  "files": {
+    "raw_results_csv": "raw_results.csv",
+    "final_comparison_csv": "final_comparison.csv",
+    "normalized_comparison_csv": "normalized_comparison.csv"
+  }
+}

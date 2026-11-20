@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AdaptiveGuard // Real-Time Mixed-Criticality Scheduling Simulation Platform</title>
+  <meta name="description" content="Interactive research platform and simulation visualization for AdaptiveGuard: Proactive Mixed-Criticality Real-Time Scheduling with Dual-Threshold Hysteresis and Graceful Service Degradation.">
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dark-theme">
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="header-branding">
+      <div class="brand-logo">
+        <div class="shield-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M12 8v4"/>
+            <path d="M12 16h.01"/>
+          </svg>
+        </div>
+        <div class="pulse-ring"></div>
+      </div>
+      <div class="brand-titles">
+        <div class="brand-name">ADAPTIVE<span class="highlight">GUARD</span> <span class="version-tag">RESEARCH PLATFORM</span></div>
+        <div class="brand-subtitle">Proactive Mixed-Criticality Scheduling & Comparative Simulation Engine</div>
+      </div>
+    </div>
+
+    <!-- Global Telemetry Status Bar -->
+    <div class="header-telemetry">
+      <div class="telemetry-pill" id="pill-scheduler">
+        <span class="pill-label">SCHEDULER</span>
+        <span class="pill-value highlight-cyan" id="current-scheduler-badge">AdaptiveGuard</span>
+      </div>
+      <div class="telemetry-pill" id="pill-scenario">
+        <span class="pill-label">SCENARIO</span>
+        <span class="pill-value highlight-amber" id="current-scenario-badge">H1_OVERRUN</span>
+      </div>
+      <div class="telemetry-pill" id="pill-system-mode">
+        <span class="pill-label">SYSTEM MODE</span>
+        <span class="mode-badge mode-lo" id="global-mode-badge">
+          <span class="status-dot"></span>
+          <span id="global-mode-text">LO</span>
+        </span>
+      </div>
+      <div class="telemetry-pill" id="pill-sim-time">
+        <span class="pill-label">SIM TIME</span>
+        <span class="pill-value mono highlight-white" id="global-time-badge">0.00 ms</span>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs" role="tablist">
+      <button class="nav-tab active" data-tab="studio" id="tab-btn-studio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Simulation Studio
+      </button>
+      <button class="nav-tab" data-tab="comparison" id="tab-btn-comparison">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Comparative Evaluation
+      </button>
+      <button class="nav-tab" data-tab="sweeps" id="tab-btn-sweeps">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+        Research Sweeps & Ablation
+      </button>
+      <button class="nav-tab" data-tab="architecture" id="tab-btn-architecture">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Taskset & Math Specs
+      </button>
+      <button class="nav-tab" data-tab="sandbox" id="tab-btn-sandbox">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Interactive Sandbox
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="app-main">
+    
+    <!-- ========================================================================= -->
+    <!-- TAB 1: SIMULATION STUDIO -->
+    <!-- ========================================================================= -->
+    <section class="tab-pane active" id="pane-studio">
+      
+      <!-- Studio Control Bar -->
+      <div class="studio-toolbar glass-panel">
+        <div class="control-group">
+          <label class="control-label" for="select-scheduler">Target Approach:</label>
+          <div class="select-wrapper">
+            <select id="select-scheduler" class="custom-select">
+              <option value="AdaptiveGuard" selected>AdaptiveGuard (Proposed Unified Framework)</option>
+              <option value="Classical Reactive MC">Classical Reactive MC (Vestal 2007 Baseline)</option>
+              <option value="EDF-VD + Degraded LO Service">EDF-VD + Degraded LO Service (Su & Zhu 2013)</option>
+              <option value="EDF-VD">EDF-VD (Baruah et al. 2011)</option>
+              <option value="Flexible MC">Flexible MC (Burns & Baruah 2013)</option>
+              <option value="Proactive Risk / Mode Change">Proactive Risk MC (No Hysteresis)</option>
+              <option value="EDF">EDF (Liu & Layland 1973 - Non-Criticality)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="select-scenario">Benchmark Scenario:</label>
+          <div class="select-wrapper">
+            <select id="select-scenario" class="custom-select">
+              <option value="NORMAL">1. NORMAL (Nominal Load U=0.70)</option>
+              <option value="H1_OVERRUN" selected>2. SINGLE HI OVERRUN (H1 Flight Control Overrun)</option>
+              <option value="BOTH_OVERRUN">3. BOTH OVERRUN (H1 & H2 Severe Overload U=1.10)</option>
+              <option value="BURSTY">4. BURSTY OVERLOAD (Transient Risk Waves)</option>
+              <option value="RECOVERY">5. RECOVERY SCENARIO (Overload Subside & Healing)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- View Mode: Single or Side-by-Side Dual Comparison -->
+        <div class="control-group view-toggle-group">
+          <label class="control-label">Studio Mode:</label>
+          <div class="segmented-control">
+            <button class="seg-btn active" id="btn-mode-single" data-mode="single">Single View</button>
+            <button class="seg-btn" id="btn-mode-compare" data-mode="compare">
+              <span class="compare-icon">⚡</span> Side-by-Side Dual
+            </button>
+          </div>
+        </div>
+
+        <!-- Secondary Scheduler (Visible in Dual Comparison) -->
+        <div class="control-group secondary-scheduler-group hidden" id="secondary-sched-container">
+          <label class="control-label" for="select-secondary-scheduler">Compare Against:</label>
+          <div class="select-wrapper">
+            <select id="select-secondary-scheduler" class="custom-select">
+              <option value="Classical Reactive MC" selected>Classical Reactive MC (Vestal 2007)</option>
+              <option value="EDF-VD + Degraded LO Service">EDF-VD + Degraded LO Service</option>
+              <option value="EDF-VD">EDF-VD (Baruah et al.)</option>
+              <option value="Flexible MC">Flexible MC</option>
+              <option value="Proactive Risk / Mode Change">Proactive Risk MC</option>
+              <option value="EDF">EDF (Liu & Layland)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Playback Actions -->
+        <div class="playback-actions">
+          <button class="btn btn-icon" id="btn-step-back" title="Step Back (0.5 ms)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+          </button>
+          
+          <button class="btn btn-primary btn-play" id="btn-play-pause" title="Play / Pause Simulation">
+            <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg id="pause-icon" class="hidden" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            <span id="play-text">PLAY</span>
+          </button>
+          
+          <button class="btn btn-icon" id="btn-step-fwd" title="Step Forward (0.5 ms)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+          </button>
+
+          <button class="btn btn-icon" id="btn-reset" title="Reset Timeline to 0 ms">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          </button>
+
+          <div class="speed-selector">
+            <span class="speed-label">Speed:</span>
+            <select id="select-speed" class="custom-select mini-select">
+              <option value="0.25">0.25x</option>
+              <option value="0.5">0.5x</option>
+              <option value="1.0" selected>1.0x</option>
+              <option value="2.0">2.0x</option>
+              <option value="5.0">5.0x</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scrubber Timeline Bar -->
+      <div class="timeline-scrubber-bar glass-panel">
+        <div class="scrubber-labels">
+          <span class="mono-label">T = 0.00 ms</span>
+          <span class="current-time-display mono" id="scrubber-time-display">T = 0.00 ms</span>
+          <span class="mono-label">T = 40.00 ms (Duration)</span>
+        </div>
+        <div class="slider-track-wrapper">
+          <input type="range" id="sim-time-slider" min="0" max="40" step="0.5" value="0" class="time-range-slider">
+          <div class="slider-progress" id="slider-progress-bar"></div>
+        </div>
+      </div>
+
+      <!-- Studio Grid Workspace -->
+      <div class="studio-grid" id="studio-grid-container">
+
+        <!-- PRIMARY SIMULATION COLUMN -->
+        <div class="sim-column primary-column glass-panel" id="primary-column">
+          <div class="column-header">
+            <div class="column-title-wrap">
+              <div class="approach-badge" id="primary-sched-label">AdaptiveGuard</div>
+              <span class="scenario-pill" id="primary-scenario-label">H1_OVERRUN</span>
+            </div>
+            <div class="column-metrics-summary" id="primary-metrics-strip">
+              <div class="metric-chip"><span class="m-label">HI Misses:</span> <span class="m-val val-good" id="p-hi-misses">0</span></div>
+              <div class="metric-chip"><span class="m-label">LO Utility:</span> <span class="m-val val-cyan" id="p-lo-util">100.0%</span></div>
+              <div class="metric-chip"><span class="m-label">Mode Switches:</span> <span class="m-val" id="p-switches">4</span></div>
+              <div class="metric-chip"><span class="m-label">Overhead:</span> <span class="m-val" id="p-overhead">4.72%</span></div>
+            </div>
+          </div>
+
+          <!-- Gantt Chart Container -->
+          <div class="gantt-section">
+            <div class="section-title-row">
+              <span class="sec-title">CPU EXECUTION GANTT SCHEDULE (0 – 40 ms)</span>
+              <div class="gantt-legend" id="gantt-legend">
+                <span class="legend-item"><span class="legend-box task-h1"></span> H1 Flight_Ctrl (HI)</span>
+                <span class="legend-item"><span class="legend-box task-h2"></span> H2 Braking_Ctrl (HI)</span>
+                <span class="legend-item"><span class="legend-box task-l1"></span> L1 Telemetry (LO)</span>
+                <span class="legend-item"><span class="legend-box task-l2"></span> L2 Logging_A</span>
+                <span class="legend-item"><span class="legend-box task-l3"></span> L3 Logging_B</span>
+                <span class="legend-item"><span class="legend-box task-l4"></span> L4 Logging_C</span>
+                <span class="legend-item"><span class="legend-box task-idle"></span> IDLE</span>
+              </div>
+            </div>
+            <div class="canvas-container">
+              <canvas id="gantt-canvas-primary" class="gantt-canvas" width="1000" height="230"></canvas>
+              <div id="gantt-tooltip" class="gantt-tooltip hidden"></div>
+            </div>
+          </div>
+
+          <!-- Dynamic Control Dynamics Row: Mode State Machine + Continuous Risk Engine + LO Knapsack Rack -->
+          <div class="dynamics-row">
+            
+            <!-- 1. System Mode State Machine Visualizer -->
+            <div class="card subcard-mode">
+              <div class="card-header-clean">
+                <span class="card-title-sm">SYSTEM MODE STATE DYNAMICS</span>
+                <span class="card-badge" id="mode-state-tag">LO NORMAL</span>
+              </div>
+              <div class="mode-state-graph">
+                <div class="mode-node mode-node-lo active" id="node-lo">
+                  <div class="node-ring"></div>
+                  <div class="node-code">LO</div>
+                  <div class="node-sub">Normal Mode</div>
+                  <div class="node-threshold">R &lt; 0.50</div>
+                </div>
+                <div class="mode-arrow">⇄</div>
+                <div class="mode-node mode-node-warning" id="node-warning">
+                  <div class="node-ring"></div>
+                  <div class="node-code">WARN</div>
+                  <div class="node-sub">Hysteresis Buffer</div>
+                  <div class="node-threshold">0.50 ≤ R &lt; 0.80</div>
+                </div>
+                <div class="mode-arrow">⇄</div>
+                <div class="mode-node mode-node-hi" id="node-hi">
+                  <div class="node-ring"></div>
+                  <div class="node-code">HI</div>
+                  <div class="node-sub">Overrun Protection</div>
+                  <div class="node-threshold">R ≥ 0.80</div>
+                </div>
+                <div class="mode-arrow">⇄</div>
+                <div class="mode-node mode-node-recovery" id="node-recovery">
+                  <div class="node-ring"></div>
+                  <div class="node-code">REC</div>
+                  <div class="node-sub">Gradual Healing</div>
+                  <div class="node-threshold">R ≤ 0.40</div>
+                </div>
+              </div>
+              <div class="state-trigger-audit" id="primary-trigger-text">
+                Trigger: Periodic Monitor (Nominal)
+              </div>
+            </div>
+
+            <!-- 2. Continuous Multi-Factor Risk Gauge -->
+            <div class="card subcard-risk">
+              <div class="card-header-clean">
+                <span class="card-title-sm">CONTINUOUS RISK ESTIMATOR (R_total)</span>
+                <span class="risk-val-badge mono" id="primary-risk-badge">R = 0.090</span>
+              </div>
+              
+              <div class="risk-gauge-container">
+                <div class="risk-meter-wrapper">
+                  <div class="risk-meter-bar">
+                    <div class="risk-level-fill" id="primary-risk-fill" style="width: 9%;"></div>
+                    <!-- Threshold markers -->
+                    <div class="threshold-marker thresh-rec" style="left: 40%;" title="Recovery Threshold (0.40)"></div>
+                    <div class="threshold-marker thresh-warn" style="left: 50%;" title="Warning Threshold (0.50)"></div>
+                    <div class="threshold-marker thresh-hi" style="left: 80%;" title="HI Threshold (0.80)"></div>
+                  </div>
+                  <div class="threshold-legend">
+                    <span>0.0</span>
+                    <span class="color-rec">Rec 0.40</span>
+                    <span class="color-warn">Warn 0.50</span>
+                    <span class="color-hi">HI 0.80</span>
+                    <span>1.0</span>
+                  </div>
+                </div>
+
+                <!-- 4 Factor Breakdown -->
+                <div class="risk-components-grid">
+                  <div class="r-factor">
+                    <div class="rf-header">
+                      <span class="rf-name">R_util (30%)</span>
+                      <span class="rf-val mono" id="p-rf-util">0.30</span>
+                    </div>
+                    <div class="rf-bar"><div class="rf-fill" id="p-rfill-util" style="width: 30%;"></div></div>
+                  </div>
+                  <div class="r-factor">
+                    <div class="rf-header">
+                      <span class="rf-name">R_laxity (30%)</span>
+                      <span class="rf-val mono" id="p-rf-laxity">0.00</span>
+                    </div>
+                    <div class="rf-bar"><div class="rf-fill" id="p-rfill-laxity" style="width: 0%;"></div></div>
+                  </div>
+                  <div class="r-factor">
+                    <div class="rf-header">
+                      <span class="rf-name">R_overrun (25%)</span>
+                      <span class="rf-val mono" id="p-rf-overrun">0.00</span>
+                    </div>
+                    <div class="rf-bar"><div class="rf-fill" id="p-rfill-overrun" style="width: 0%;"></div></div>
+                  </div>
+                  <div class="r-factor">
+                    <div class="rf-header">
+                      <span class="rf-name">R_deadline (15%)</span>
+                      <span class="rf-val mono" id="p-rf-deadline">0.00</span>
+                    </div>
+                    <div class="rf-bar"><div class="rf-fill" id="p-rfill-deadline" style="width: 0%;"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. LO Task Service Knapsack Degradation Rack -->
+            <div class="card subcard-knapsack">
+              <div class="card-header-clean">
+                <span class="card-title-sm">LO SERVICE ALLOCATION (KNAPSACK)</span>
+                <span class="card-sub-tip">Utility Density ρ = U / C_LO</span>
+              </div>
+              <div class="knapsack-list" id="primary-knapsack-rack">
+                
+                <!-- L1 Telemetry (High Density) -->
+                <div class="service-row" id="row-service-l1">
+                  <div class="service-info">
+                    <span class="task-badge task-l1">L1</span>
+                    <div class="service-name-wrap">
+                      <span class="s-name">Telemetry</span>
+                      <span class="s-density">Density: 16.67 (Rank 1)</span>
+                    </div>
+                  </div>
+                  <div class="service-slider-track">
+                    <div class="service-fill fill-l1" id="sfill-l1" style="width: 100%;"></div>
+                  </div>
+                  <span class="service-pct mono" id="spct-l1">100%</span>
+                </div>
+
+                <!-- L2 Logging A -->
+                <div class="service-row" id="row-service-l2">
+                  <div class="service-info">
+                    <span class="task-badge task-l2">L2</span>
+                    <div class="service-name-wrap">
+                      <span class="s-name">Logging_A</span>
+                      <span class="s-density">Density: 10.00 (Rank 2)</span>
+                    </div>
+                  </div>
+                  <div class="service-slider-track">
+                    <div class="service-fill fill-l2" id="sfill-l2" style="width: 100%;"></div>
+                  </div>
+                  <span class="service-pct mono" id="spct-l2">100%</span>
+                </div>
+
+                <!-- L3 Logging B -->
+                <div class="service-row" id="row-service-l3">
+                  <div class="service-info">
+                    <span class="task-badge task-l3">L3</span>
+                    <div class="service-name-wrap">
+                      <span class="s-name">Logging_B</span>
+                      <span class="s-density">Density: 10.00 (Rank 3)</span>
+                    </div>
+                  </div>
+                  <div class="service-slider-track">
+                    <div class="service-fill fill-l3" id="sfill-l3" style="width: 100%;"></div>
+                  </div>
+                  <span class="service-pct mono" id="spct-l3">100%</span>
+                </div>
+
+                <!-- L4 Logging C -->
+                <div class="service-row" id="row-service-l4">
+                  <div class="service-info">
+                    <span class="task-badge task-l4">L4</span>
+                    <div class="service-name-wrap">
+                      <span class="s-name">Logging_C</span>
+                      <span class="s-density">Density: 10.00 (Rank 4)</span>
+                    </div>
+                  </div>
+                  <div class="service-slider-track">
+                    <div class="service-fill fill-l4" id="sfill-l4" style="width: 100%;"></div>
+                  </div>
+                  <span class="service-pct mono" id="spct-l4">100%</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Real-Time Event Audit Ticker -->
+          <div class="events-audit-strip">
+            <div class="events-header">
+              <span class="events-title">LIVE EVENT AUDIT STREAM</span>
+              <span class="events-count" id="primary-events-count">0 events</span>
+            </div>
+            <div class="events-scroll-box" id="primary-events-log">
+              <!-- Dynamically populated events -->
+            </div>
+          </div>
+        </div>
+
+        <!-- SECONDARY SIMULATION COLUMN (Used in Side-by-Side Comparison Mode) -->
+        <div class="sim-column secondary-column glass-panel hidden" id="secondary-column">
+          <div class="column-header">
+            <div class="column-title-wrap">
+              <div class="approach-badge badge-secondary" id="secondary-sched-label">Classical Reactive MC</div>
+              <span class="scenario-pill" id="secondary-scenario-label">H1_OVERRUN</span>
+            </div>
+            <div class="column-metrics-summary" id="secondary-metrics-strip">
+              <div class="metric-chip"><span class="m-label">HI Misses:</span> <span class="m-val val-good" id="s-hi-misses">0</span></div>
+              <div class="metric-chip"><span class="m-label">LO Utility:</span> <span class="m-val val-bad" id="s-lo-util">0.0%</span></div>
+              <div class="metric-chip"><span class="m-label">LO Dropped:</span> <span class="m-val val-bad" id="s-lo-dropped">4 jobs</span></div>
+              <div class="metric-chip"><span class="m-label">Overhead:</span> <span class="m-val" id="s-overhead">4.63%</span></div>
+            </div>
+          </div>
+
+          <!-- Secondary Gantt Canvas -->
+          <div class="gantt-section">
+            <div class="section-title-row">
+              <span class="sec-title">BASELINE SCHEDULE GANTT</span>
+            </div>
+            <div class="canvas-container">
+              <canvas id="gantt-canvas-secondary" class="gantt-canvas" width="1000" height="230"></canvas>
+            </div>
+          </div>
+
+          <!-- Secondary Dynamics: Mode & Degradation Comparison -->
+          <div class="dynamics-row">
+            <div class="card subcard-mode">
+              <div class="card-header-clean">
+                <span class="card-title-sm">BASELINE MODE STATE</span>
+                <span class="card-badge" id="s-mode-state-tag">LO</span>
+              </div>
+              <div class="baseline-mode-banner" id="secondary-mode-banner">
+                <span class="banner-mode-text" id="s-banner-text">Operating in LO Mode</span>
+                <span class="banner-subtext" id="s-banner-sub">Upon HI overrun, all LO tasks will be completely dropped (Vestal 2007).</span>
+              </div>
+            </div>
+
+            <div class="card subcard-knapsack">
+              <div class="card-header-clean">
+                <span class="card-title-sm">BASELINE LO SERVICE LEVELS</span>
+                <span class="card-sub-tip">Static All-or-Nothing Model</span>
+              </div>
+              <div class="knapsack-list" id="secondary-knapsack-rack">
+                <div class="service-row">
+                  <span class="task-badge task-l1">L1</span>
+                  <div class="service-slider-track">
+                    <div class="service-fill fill-l1" id="s2fill-l1" style="width: 100%;"></div>
+                  </div>
+                  <span class="service-pct mono" id="s2pct-l1">100%</span>
+                </div>
+                <div class="service-row">
+                  <span class="task-badge task-l2">L2</span>
+                  <div class="service-slider-track">
+                    <div class="service-fill fill-l2" id="s2fill-l2" style="width: 100%;"></div>
+                  </div>
+                  <span class="service-pct mono" id="s2pct-l2">100%</span>
+                </div>
+                <div class="service-row">
+                  <span class="task-badge task-l3">L3</span>
+                  <div class="service-slider-track">
+                    <div class="service-fill fill-l3" id="s2fill-l3" style="width: 100%;"></div>
+                  </div>
+                  <span class="service-pct mono" id="s2pct-l3">100%</span>
+                </div>
+                <div class="service-row">
+                  <span class="task-badge task-l4">L4</span>
+                  <div class="service-slider-track">
+                    <div class="service-fill fill-l4" id="s2fill-l4" style="width: 100%;"></div>
+                  </div>
+                  <span class="service-pct mono" id="s2pct-l4">100%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Secondary Event Log -->
+          <div class="events-audit-strip">
+            <div class="events-header">
+              <span class="events-title">BASELINE AUDIT LOG</span>
+              <span class="events-count" id="secondary-events-count">0 events</span>
+            </div>
+            <div class="events-scroll-box" id="secondary-events-log"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 2: COMPARATIVE EVALUATION MATRIX -->
+    <!-- ========================================================================= -->
+    <section class="tab-pane" id="pane-comparison">
+      <div class="section-intro">
+        <h2 class="section-heading">Rigorous Empirical Comparative Evaluation</h2>
+        <p class="section-desc">
+          Evaluated across 1,800 synthetic UUniFast task sets (12,600 independent simulation runs) under strict fairness guarantees:
+          identical execution traces, identical release schedules, and calibrated computational overhead models.
+        </p>
+      </div>
+
+      <!-- Comparative Key Insights Cards -->
+      <div class="insights-grid">
+        <div class="insight-card border-cyan">
+          <div class="insight-header">
+            <span class="insight-category">LO UTILITY PRESERVATION</span>
+            <span class="insight-win-tag win-gold">AdaptiveGuard Advantage</span>
+          </div>
+          <div class="insight-big-stat">+88.4%</div>
+          <div class="insight-text">
+            AdaptiveGuard preserves <strong>52.20%</strong> of low-criticality service utility, outperforming uniform degraded EDF-VD (27.70%) and Classical MC (0.00% utility).
+          </div>
+        </div>
+
+        <div class="insight-card border-emerald">
+          <div class="insight-header">
+            <span class="insight-category">HI DEADLINE SAFETY</span>
+            <span class="insight-win-tag win-green">Guaranteed Protection</span>
+          </div>
+          <div class="insight-big-stat">0 Misses</div>
+          <div class="insight-text">
+            Under all realistic mixed-criticality loads ($U \le 1.0$), AdaptiveGuard completely eliminates HI deadline misses, unlike EDF which suffers a fatal <strong>76.22%</strong> miss ratio.
+          </div>
+        </div>
+
+        <div class="insight-card border-purple">
+          <div class="insight-header">
+            <span class="insight-category">STABILITY & CHATTERING</span>
+            <span class="insight-win-tag win-purple">Dual-Threshold Hysteresis</span>
+          </div>
+          <div class="insight-big-stat">91.9% Drop</div>
+          <div class="insight-text">
+            Hysteresis dampening cuts rapid mode oscillations from <strong>563.70</strong> switches (unbuffered proactive risk) down to <strong>45.30</strong> stable transitions.
+          </div>
+        </div>
+
+        <div class="insight-card border-blue">
+          <div class="insight-header">
+            <span class="insight-category">SELF-HEALING RECOVERY</span>
+            <span class="insight-win-tag win-blue">Automatic Return-to-LO</span>
+          </div>
+          <div class="insight-big-stat">0.43 ms</div>
+          <div class="insight-text">
+            AdaptiveGuard is the <strong>only evaluated approach</strong> that successfully implements an automatic, stable return-to-LO protocol without oscillations.
+          </div>
+        </div>
+      </div>
+
+      <!-- Full Comparison Table Container -->
+      <div class="card table-card glass-panel">
+        <div class="table-card-header">
+          <div class="table-title">Full Empirical Benchmark Matrix (All 7 Research Approaches)</div>
+          <div class="table-actions">
+            <span class="badge-subtle">12,600 Simulation Runs</span>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="table-comparison">
+            <thead>
+              <tr>
+                <th>Approach</th>
+                <th>HI Miss Ratio (↓)</th>
+                <th>LO Completion (↑)</th>
+                <th>LO Utility (↑)</th>
+                <th>CPU Utilization</th>
+                <th>Avg Resp (ms)</th>
+                <th>Worst Resp (ms)</th>
+                <th>Deadline Misses</th>
+                <th>Mode Switches</th>
+                <th>LO Jobs Dropped</th>
+                <th>Preemptions</th>
+                <th>Overhead %</th>
+                <th>Recovery (ms)</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-comparison">
+              <!-- Dynamically populated from dataset -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Radar & Normalized Comparison Grid -->
+      <div class="grid-2-col">
+        <div class="card glass-panel">
+          <div class="card-header-clean">
+            <span class="card-title-sm">MULTIDIMENSIONAL RADAR COMPARISON</span>
+            <span class="card-sub-tip">Normalized [0, 1] Trade-off</span>
+          </div>
+          <div class="chart-canvas-wrapper">
+            <canvas id="canvas-radar" width="500" height="380"></canvas>
+          </div>
+          <div class="radar-legend" id="radar-legend"></div>
+        </div>
+
+        <div class="card glass-panel">
+          <div class="card-header-clean">
+            <span class="card-title-sm">PRIMARY RESEARCH TRADE-OFF (SAFETY vs UTILITY)</span>
+            <span class="card-sub-tip">Pareto Optimal Frontier</span>
+          </div>
+          <div class="chart-canvas-wrapper">
+            <canvas id="canvas-pareto" width="500" height="380"></canvas>
+          </div>
+          <div class="pareto-annotation">
+            <p><strong>AdaptiveGuard</strong> dominates the trade-off space by residing in the high-safety, high-utility Pareto quadrant.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 3: RESEARCH SWEEPS & ABLATION EXPLORER -->
+    <!-- ========================================================================= -->
+    <section class="tab-pane" id="pane-sweeps">
+      <div class="section-intro">
+        <h2 class="section-heading">System Utilization Sweep & Modular Ablation Study</h2>
+        <p class="section-desc">
+          Examine algorithmic behavior across total utilization $U \in [0.40, 1.50]$ and verify the independent scientific value of each architectural component.
+        </p>
+      </div>
+
+      <!-- Sweep Chart Controls -->
+      <div class="card glass-panel sweep-controls-card">
+        <div class="sweep-btn-row">
+          <span class="sweep-ctrl-label">Select Utilization Metric to Graph:</span>
+          <div class="segmented-control" id="sweep-metric-selector">
+            <button class="seg-btn active" data-metric="hi_miss_ratio">HI Deadline Miss Ratio (↓)</button>
+            <button class="seg-btn" data-metric="lo_utility_ratio">LO Utility Preservation (↑)</button>
+            <button class="seg-btn" data-metric="mode_switches">Mode Switch Chattering (↓)</button>
+            <button class="seg-btn" data-metric="overhead_percentage">Computational Overhead % (↓)</button>
+            <button class="seg-btn" data-metric="cpu_utilization">CPU Utilization (↑)</button>
+          </div>
+        </div>
+
+        <div class="chart-canvas-wrapper sweep-chart-wrapper">
+          <canvas id="canvas-sweep" width="1050" height="360"></canvas>
+        </div>
+        <div class="sweep-legend" id="sweep-legend"></div>
+      </div>
+
+      <!-- Modular Ablation Study Cards (Config A through F) -->
+      <div class="ablation-section">
+        <h3 class="sub-heading">Component Ablation Study: Configurations A through F</h3>
+        <p class="sub-desc">Proving that every individual sub-system of AdaptiveGuard contributes positively to mixed-criticality safety and service quality.</p>
+        
+        <div class="ablation-cards-grid" id="ablation-cards-container">
+          <!-- Dynamically populated from ablation table -->
+        </div>
+
+        <div class="card glass-panel ablation-table-card">
+          <div class="table-title">Component Ablation Experimental Table</div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-ablation">
+              <thead>
+                <tr>
+                  <th>Config</th>
+                  <th>Architecture Description</th>
+                  <th>HI Miss Ratio (↓)</th>
+                  <th>LO Utility Ratio (↑)</th>
+                  <th>LO Completion (↑)</th>
+                  <th>CPU Util</th>
+                  <th>Mode Switches</th>
+                  <th>Overhead %</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-ablation">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 4: TASKSET & MATHEMATICAL SPECIFICATIONS -->
+    <!-- ========================================================================= -->
+    <section class="tab-pane" id="pane-architecture">
+      <div class="section-intro">
+        <h2 class="section-heading">Taskset Specifications & Algorithmic Formulations</h2>
+        <p class="section-desc">
+          Mathematical foundation of the AdaptiveGuard framework: Task 6-tuple definitions, multi-factor composite risk equations, utility-density knapsack ranking, and dual-threshold state machine mechanics.
+        </p>
+      </div>
+
+      <!-- Taskset Inspector -->
+      <div class="card glass-panel">
+        <div class="card-header-clean">
+          <span class="card-title-sm">BENCHMARK WORKLOAD SPECIFICATION (stress_20ms)</span>
+          <span class="badge-subtle">Normal Load: U = 0.70 | Worst-Case: U = 1.10</span>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="table-tasks">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Task Name</th>
+                <th>Criticality</th>
+                <th>Period (T_i)</th>
+                <th>Deadline (D_i)</th>
+                <th>C_LO (ms)</th>
+                <th>C_HI (ms)</th>
+                <th>Utility (U_i)</th>
+                <th>Utility Density (ρ_i)</th>
+                <th>Service Range</th>
+                <th>Role in Avionics System</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-tasks">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Math Formulations Grid -->
+      <div class="math-grid">
+        <div class="card math-card glass-panel">
+          <div class="math-badge">Equation 1</div>
+          <h3 class="math-title">Multi-Factor Composite Risk Model</h3>
+          <p class="math-desc">Calculated continuously every 0.5 ms to anticipate execution crises before deadline violations occur:</p>
+          <div class="math-formula-box">
+            $$R_{total}(t) = 0.30 R_{util}(t) + 0.30 R_{laxity}(t) + 0.25 R_{overrun}(t) + 0.15 R_{deadline}(t)$$
+          </div>
+          <div class="math-components-list">
+            <div class="m-comp-item">
+              <span class="comp-tag">R_util(t)</span>
+              <span>Normalized cumulative utilization pressure of active jobs currently queued for CPU processing.</span>
+            </div>
+            <div class="m-comp-item">
+              <span class="comp-tag">R_laxity(t)</span>
+              <span>Inverse execution laxity $L_i(t) = (d_i - t) - c_i^{rem}(t)$, penalizing near-zero slack margins.</span>
+            </div>
+            <div class="m-comp-item">
+              <span class="comp-tag">R_overrun(t)</span>
+              <span>Active ratio of HI tasks that have exceeded their nominal $C^{LO}$ execution budget.</span>
+            </div>
+            <div class="m-comp-item">
+              <span class="comp-tag">R_deadline(t)</span>
+              <span>Urgency factor scaling with the absolute proximity of the earliest pending deadline.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card math-card glass-panel">
+          <div class="math-badge">Equation 2</div>
+          <h3 class="math-title">Utility-Density Knapsack Service Degradation</h3>
+          <p class="math-desc">When entering degraded states, LO tasks are prioritized by their utility-density ratio rather than uniformly dropped:</p>
+          <div class="math-formula-box">
+            $$\rho_i = \frac{U_i}{C_i^{LO}}$$
+          </div>
+          <div class="math-components-list">
+            <div class="m-comp-item">
+              <span class="comp-tag">Rank 1: Telemetry (L1)</span>
+              <span>$\rho_1 = \frac{100.0}{6.0} = 16.67$ — Protected at full fidelity to preserve primary mission value.</span>
+            </div>
+            <div class="m-comp-item">
+              <span class="comp-tag">Rank 2: Logging_A (L2)</span>
+              <span>$\rho_2 = \frac{10.0}{1.0} = 10.00$ — Throttled first under moderate risk ($R \ge 0.50$).</span>
+            </div>
+            <div class="m-comp-item">
+              <span class="comp-tag">Rank 3: Logging_B (L3)</span>
+              <span>$\rho_3 = \frac{10.0}{1.0} = 10.00$ — Throttled second under elevated risk.</span>
+            </div>
+            <div class="m-comp-item">
+              <span class="comp-tag">Rank 4: Logging_C (L4)</span>
+              <span>$\rho_4 = \frac{10.0}{1.0} = 10.00$ — Suspended under extreme risk ($R \ge 0.80$).</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card math-card glass-panel">
+          <div class="math-badge">Mechanism 3</div>
+          <h3 class="math-title">Dual-Threshold Hysteresis Dampening</h3>
+          <p class="math-desc">Eliminates mode chattering by enforcing asymmetrical transition boundaries:</p>
+          <div class="math-formula-box">
+            $$T_{enter}^{WARN} = 0.50, \quad T_{enter}^{HI} = 0.80, \quad T_{exit}^{REC} = 0.40$$
+          </div>
+          <div class="math-components-list">
+            <div class="m-comp-item">
+              <span class="comp-tag">Hysteresis Buffer</span>
+              <span>Once in HI or WARNING mode, the system does not rapidly bounce back upon small load drops; it requires $R(t) \le 0.40$ sustained over time.</span>
+            </div>
+            <div class="m-comp-item">
+              <span class="comp-tag">Gradual Multi-Step Recovery</span>
+              <span>Restores degraded LO task budgets in controlled increments ($+25\%$ per recovery period) to prevent secondary overload spikes.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 5: INTERACTIVE SANDBOX & PARAMETER TUNER -->
+    <!-- ========================================================================= -->
+    <section class="tab-pane" id="pane-sandbox">
+      <div class="section-intro">
+        <h2 class="section-heading">Interactive Simulation Sandbox</h2>
+        <p class="section-desc">
+          Customize scheduling parameters, risk weights, and thresholds in real-time. Execute instant in-browser simulations to explore edge cases and custom task configurations.
+        </p>
+      </div>
+
+      <div class="sandbox-grid">
+        <!-- Parameters Form -->
+        <div class="card glass-panel sandbox-params-card">
+          <div class="card-header-clean">
+            <span class="card-title-sm">SIMULATION CONFIGURATION PARAMETERS</span>
+            <button class="btn btn-secondary btn-sm" id="btn-reset-sandbox-params">Reset Defaults</button>
+          </div>
+
+          <div class="params-section">
+            <span class="param-group-title">Threshold Tuning</span>
+            
+            <div class="param-slider-item">
+              <div class="param-label-row">
+                <span>Warning Entry Threshold (T_warn)</span>
+                <span class="param-val mono" id="val-t-warn">0.50</span>
+              </div>
+              <input type="range" id="input-t-warn" min="0.20" max="0.80" step="0.05" value="0.50" class="time-range-slider">
+            </div>
+
+            <div class="param-slider-item">
+              <div class="param-label-row">
+                <span>HI Mode Entry Threshold (T_hi)</span>
+                <span class="param-val mono" id="val-t-hi">0.80</span>
+              </div>
+              <input type="range" id="input-t-hi" min="0.60" max="0.95" step="0.05" value="0.80" class="time-range-slider">
+            </div>
+
+            <div class="param-slider-item">
+              <div class="param-label-row">
+                <span>Recovery Threshold (T_rec)</span>
+                <span class="param-val mono" id="val-t-rec">0.40</span>
+              </div>
+              <input type="range" id="input-t-rec" min="0.10" max="0.50" step="0.05" value="0.40" class="time-range-slider">
+            </div>
+          </div>
+
+          <div class="params-section">
+            <span class="param-group-title">Workload Severity & Overrun Factor</span>
+            <div class="param-slider-item">
+              <div class="param-label-row">
+                <span>H1 Overrun Factor (C_HI / C_LO)</span>
+                <span class="param-val mono" id="val-h1-factor">3.0x</span>
+              </div>
+              <input type="range" id="input-h1-factor" min="1.0" max="4.0" step="0.5" value="3.0" class="time-range-slider">
+            </div>
+
+            <div class="param-slider-item">
+              <div class="param-label-row">
+                <span>H2 Overrun Factor (C_HI / C_LO)</span>
+                <span class="param-val mono" id="val-h2-factor">2.33x</span>
+              </div>
+              <input type="range" id="input-h2-factor" min="1.0" max="4.0" step="0.5" value="2.33" class="time-range-slider">
+            </div>
+          </div>
+
+          <div class="params-section">
+            <span class="param-group-title">Computational Overhead Emulation</span>
+            <div class="checkbox-row">
+              <label class="toggle-switch">
+                <input type="checkbox" id="check-enable-overhead" checked>
+                <span class="slider round"></span>
+              </label>
+              <span class="toggle-label">Enable Scheduling & Risk Overhead (0.01ms / 0.005ms)</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-block btn-lg" id="btn-run-sandbox">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            RUN LIVE SIMULATION
+          </button>
+        </div>
+
+        <!-- Sandbox Results Output -->
+        <div class="card glass-panel sandbox-results-card">
+          <div class="card-header-clean">
+            <span class="card-title-sm">LIVE SIMULATION OUTPUT & GANTT</span>
+            <span class="badge-subtle" id="sandbox-status-badge">Ready to simulate</span>
+          </div>
+
+          <div class="sandbox-metrics-row">
+            <div class="stat-box">
+              <span class="stat-label">HI Misses</span>
+              <span class="stat-value val-good" id="sb-hi-misses">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">LO Utility</span>
+              <span class="stat-value val-cyan" id="sb-lo-util">100%</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">CPU Util</span>
+              <span class="stat-value" id="sb-cpu-util">95.4%</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Mode Switches</span>
+              <span class="stat-value" id="sb-switches">4</span>
+            </div>
+          </div>
+
+          <div class="sandbox-canvas-wrap">
+            <canvas id="sandbox-gantt-canvas" class="gantt-canvas" width="850" height="230"></canvas>
+          </div>
+
+          <div class="sandbox-log-box" id="sandbox-log">
+            <div class="log-entry">Adjust parameters on the left and click "RUN LIVE SIMULATION" to test custom configurations.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-left">
+      <span>AdaptiveGuard Research Platform &copy; 2026</span>
+      <span class="divider">•</span>
+      <span>Mixed-Criticality Real-Time Systems Research</span>
+    </div>
+    <div class="footer-right">
+      <span class="badge-subtle">Fairness Certified UUniFast</span>
+      <span class="badge-subtle">7 Evaluated Baselines</span>
+      <span class="badge-subtle">Discrete-Event Engine</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/gantt.js"></script>
+  <script src="js/simulator.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

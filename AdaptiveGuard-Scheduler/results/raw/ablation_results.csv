@@ -1,0 +1,7 @@
+ablation_code,scheduler,hi_miss_ratio,lo_utility_ratio,lo_completion_ratio,cpu_utilization,mode_switches,total_overhead,overhead_percentage,average_response_time,worst_response_time
+A,A: EDF-VD,0.0,0.0,0.04,0.6580199999999963,0,4.01,0.8019999999999999,9.5,13.0
+B,B: EDF-VD + generic degraded LO service,0.0,0.5,1.0,0.8850199999999943,0,5.01,1.002,14.333333333333334,17.5
+C,C: EDF-VD + proactive risk,0.0,0.7538461538461538,0.98,1.0,60,25.36,5.072,18.370967741935484,26.0
+D,D: EDF-VD + utility-aware degradation,0.0,0.8461538461538461,0.52,1.0,0,4.27,0.8539999999999999,14.5,20.0
+E,E: EDF-VD + proactive risk + degradation,0.0,0.8307692307692308,0.98,1.0,114,25.800000000000004,5.160000000000001,20.115384615384617,26.0
+F,F: Full AdaptiveGuard,0.0,0.8087179487179487,0.72,1.0,71,25.385,5.077,19.39047619047619,26.5
